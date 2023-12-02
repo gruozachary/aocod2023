@@ -3,7 +3,7 @@ import Data.List (maximumBy)
 import Data.Ord (comparing)
 import Control.Applicative (Applicative(liftA2))
 
-data Cube = R Int | B Int | G Int
+data Cube = R { value :: Int } | B { value :: Int } | G { value :: Int }
 
 correct1 :: Cube -> Bool
 correct1 (R x) = x < 13
@@ -21,11 +21,6 @@ parseMany = map (parse . deleteGame) . lines
 
 deleteGame :: String -> String
 deleteGame = last . splitOn ": "
-
-value :: Cube -> Int
-value (R x) = x
-value (G x) = x
-value (B x) = x
 
 maxes :: [Cube] -> [Cube]
 maxes xs = [ f [R x | R x <- xs], f [G x | G x <- xs], f [B x | B x <- xs]]
