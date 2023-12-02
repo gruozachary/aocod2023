@@ -3,36 +3,33 @@ import Data.List (maximumBy)
 import Data.Ord (comparing)
 import Control.Applicative (Applicative(liftA2))
 
-data Cube = Red Int | Blue Int | Green Int deriving Show
-
-parseChunk :: [String] -> Cube
-parseChunk [x, "blue"]  = Blue $ read x
-parseChunk [x, "green"] = Green $ read x
-parseChunk [x, "red"]   = Red $ read x
+data Cube = R Int | B Int | G Int
 
 correct1 :: Cube -> Bool
-correct1 (Red x)   = x < 13
-correct1 (Green x) = x < 14
-correct1 (Blue x)  = x < 15
+correct1 (R x) = x < 13
+correct1 (G x) = x < 14
+correct1 (B x) = x < 15
 
-fullParse :: String -> [Cube]
-fullParse = map (parseChunk . words) . splitOneOf ";,"
+parse :: String -> [Cube]
+parse = map (f . words) . splitOneOf ";,"
+    where f [x, "red"]   = R $ read x
+          f [x, "green"] = G $ read x
+          f [x, "blue"]  = B $ read x
 
 parseMany :: String -> [[Cube]]
-parseMany = map (fullParse . deleteGame) . lines
+parseMany = map (parse . deleteGame) . lines
 
 deleteGame :: String -> String
 deleteGame = last . splitOn ": "
 
 value :: Cube -> Int
-value (Red x)   = x
-value (Green x) = x
-value (Blue x)  = x
+value (R x) = x
+value (G x) = x
+value (B x) = x
 
 maxes :: [Cube] -> [Cube]
-maxes xs = [ maximumBy (comparing value) [Red x | Red x <- xs]
-           , maximumBy (comparing value) [Green x | Green x <- xs]
-           , maximumBy (comparing value) [Blue x | Blue x <- xs] ]
+maxes xs = [ f [R x | R x <- xs], f [G x | G x <- xs], f [B x | B x <- xs]]
+    where f = maximumBy (comparing value)
 
 power :: [Cube] -> Int
 power = product . map value
