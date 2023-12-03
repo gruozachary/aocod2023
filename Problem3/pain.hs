@@ -8,7 +8,7 @@ import Control.Monad (unless, when, replicateM)
 import Data.Set (Set, fromList)
 import qualified Data.Set (foldl)
 
-data Item = Dot | Digit Int | Symbol Bool deriving (Eq, Ord, Show)
+data Item = Dot | Digit Int | Symbol Bool deriving (Eq, Ord)
 
 isItemDigit :: Item -> Bool
 isItemDigit (Digit _) = True
@@ -32,7 +32,7 @@ data State' = State'
     , currentItem       :: Item
     , currentlyAdjacent :: [((Int, Int), Item)]
     , currentDigits     :: [Int]
-    , numbers           :: [(Int, Set ((Int, Int), Item))] } deriving Show
+    , numbers           :: [(Int, Set ((Int, Int), Item))] }
 
 type RWS' = RWS (Array (Int, Int) Item) [String] State'
 
