@@ -13,13 +13,23 @@ parse s = let ls = lines s
               f 'L' = LeftDir
           in (map f $ head ls, parseToMap $ drop 2 ls)
 
-run1 :: [Instruction] -> InsMap -> Int
-run1 is m = f (cycle is) 0 "AAA"
+cycleLength :: [Instruction] -> InsMap -> (String -> Bool) -> String -> Int
+cycleLength is m g = f (cycle is) 0 
     where f :: [Instruction] -> Int -> String -> Int
-          f _ n "ZZZ"         = n
-          f (RightDir:is) n s = f is (n+1) (snd $ findWithDefault ("", "") s m)
-          f (LeftDir:is)  n s = f is (n+1) (fst $ findWithDefault ("", "") s m)
+          f (i:is) n s | g s = n
+                       | otherwise = f is (n+1) (h i $ findWithDefault ("", "") s m)
+          h RightDir = snd
+          h LeftDir  = fst
+
+run1 :: [Instruction] -> InsMap -> Int
+run1 is m = cycleLength is m (=="ZZZ") "AAA"
+
+run2 :: [Instruction] -> InsMap -> Int
+run2 is m = foldl lcm 1 $ map 
+    (cycleLength is m ((=='Z' ) . last))
+    (keys $ filterWithKey (\k _ -> last k == 'A') m)
 
 main = do
     s <- readFile "input.txt"
-    print $ uncurry run1 $ parse s
+    print $ uncurry run1 (parse s)
+    print $ uncurry run2 (parse s)
