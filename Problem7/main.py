@@ -4,7 +4,6 @@ from functools import cmp_to_key
 F = open("input.txt").read()
 H = [L.split() for L in F.split("\n")]
 H = [(h, int(b)) for [h, b] in H]
-print(H)
 
 class Solver:
     def __init__(self, p2):
